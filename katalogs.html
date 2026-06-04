@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>R.WOOD.B | Katalogs - Saunas un mini mājas</title>
+    <!-- Google Fonts un Font Awesome ikonām -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #faf8f3;
+            color: #2c2b28;
+            scroll-behavior: smooth;
+            line-height: 1.5;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header / navigācija */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e8e0d2;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(2px);
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 16px 0;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #4a3729;
+        }
+
+        .logo .brand-accent {
+            color: #b87c4a;
+            font-weight: 800;
+        }
+
+        .logo p {
+            font-size: 0.8rem;
+            color: #8b7358;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            background: #4a3729;
+            color: white;
+            padding: 10px 26px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .nav-btn i {
+            font-size: 0.95rem;
+        }
+
+        .nav-btn:hover {
+            background: #b87c4a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(184,124,74,0.25);
+        }
+
+        /* Aktīvā poga katalogā */
+        .nav-btn.active {
+            background: #b87c4a;
+            box-shadow: 0 4px 12px rgba(184,124,74,0.3);
+        }
+
+        /* Kataloga hero */
+        .catalog-hero {
+            background: linear-gradient(135deg, #f5efe5 0%, #fffaf0 100%);
+            padding: 50px 0 60px;
+            border-bottom: 1px solid #e9dfd1;
+            text-align: center;
+        }
+
+        .catalog-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #3a2a1f;
+            margin-bottom: 16px;
+        }
+
+        .catalog-hero .highlight {
+            color: #b87c4a;
+        }
+
+        .catalog-hero p {
+            font-size: 1.1rem;
+            color: #5e4d3a;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Filtrēšanas josla */
+        .filter-bar {
+            background: #ffffff;
+            padding: 24px 0;
+            border-bottom: 1px solid #efe5d8;
+            position: sticky;
+            top: 85px;
+            z-index: 90;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .filter-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1.5px solid #dccfbe;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #4a3729;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .filter-btn:hover {
+            border-color: #b87c4a;
+            color: #b87c4a;
+        }
+
+        .filter-btn.active-filter {
+            background: #b87c4a;
+            border-color: #b87c4a;
+            color: white;
+            box-shadow: 0 4px 10px rgba(184,124,74,0.2);
+        }
+
+        .catalog-count {
+            font-size: 0.9rem;
+            color: #8b7358;
+            font-weight: 500;
+            background: #f3ede5;
+            padding: 6px 16px;
+            border-radius: 40px;
+        }
+
+        /* Kataloga režģis */
+        .catalog-grid-section {
+            padding: 60px 0 80px;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 40px;
+        }
+
+        /* Produkta karte */
+        .product-card {
+            background: #ffffff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #efe5d8;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 35px -12px rgba(0,0,0,0.15);
+            border-color: #e2d4c4;
+        }
+
+        .card-image {
+            height: 240px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            background: #b87c4a;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-content {
+            padding: 24px 24px 28px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #3a2a1f;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: #f3ede5;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #b87c4a;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            width: fit-content;
+        }
+
+        .product-desc {
+            color: #5e4d3a;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .product-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 12px 0 20px;
+            border-top: 1px solid #efe5d8;
+            padding-top: 16px;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #6e5b48;
+            font-weight: 500;
+        }
+
+        .spec-item i {
+            color: #b87c4a;
+            width: 20px;
+            font-size: 0.9rem;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 12px;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #4a3729;
+        }
+
+        .price small {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #8b7358;
+        }
+
+        .details-link {
+            background: transparent;
+            border: 1.5px solid #dccfbe;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #4a3729;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details-link:hover {
+            background: #b87c4a;
+            border-color: #b87c4a;
+            color: white;
+        }
+
+        /* tukšs stāvoklis */
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            background: #ffffff;
+            border-radius: 48px;
+            border: 1px solid #efe5d8;
+        }
+
+        .no-results i {
+            font-size: 3.5rem;
+            color: #d2bea0;
+            margin-bottom: 20px;
+        }
+
+        .no-results h3 {
+            font-size: 1.7rem;
+            color: #4a3729;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c241e;
+            color: #cfc2b2;
+            padding: 36px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 750px) {
+            .nav-wrapper {
+                flex-direction: column;
+                gap: 18px;
+                text-align: center;
+            }
+            .catalog-hero h1 {
+                font-size: 2rem;
+            }
+            .filter-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-buttons {
+                justify-content: center;
+            }
+            .catalog-count {
+                text-align: center;
+            }
+            .catalog-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .filter-bar {
+                top: 110px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="container">
+        <div class="nav-wrapper">
+            <div class="logo">
+                <h1><span class="brand-accent">R.WOOD.B</span></h1>
+                <p>🌲 Saunas un mini mājas</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="galerija.html" class="nav-btn"><i class="fas fa-images"></i> Galerija</a>
+                <a href="katalogs.html" class="nav-btn active"><i class="fas fa-archive"></i> Katalogs</a>
+                <a href="kontakti.html" class="nav-btn"><i class="fas fa-phone"></i> Kontakti</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Kataloga virsraksts -->
+<section class="catalog-hero">
+    <div class="container">
+        <h1>🏷️ <span class="highlight">Projektu katalogs</span></h1>
+        <p>Iedvesmojies no mūsu labākajiem risinājumiem — katra sauna un mini māja ir radīta ar rūpēm un koka dvēseli.</p>
+    </div>
+</section>
+
+<!-- Filtrēšanas josla -->
+<div class="filter-bar">
+    <div class="container filter-wrapper">
+        <div class="filter-buttons" id="filterButtons">
+            <button data-filter="all" class="filter-btn active-filter">Visi projekti</button>
+            <button data-filter="sauna" class="filter-btn">🏠 Pirts & Saunas</button>
+            <button data-filter="minimaja" class="filter-btn">🌿 Mini mājas</button>
+            <button data-filter="ekskluzivs" class="filter-btn">✨ Ekskluzīvie modeļi</button>
+        </div>
+        <div class="catalog-count" id="catalogCount">Ielādē...</div>
+    </div>
+</div>
+
+<!-- Kataloga režģis -->
+<section class="catalog-grid-section">
+    <div class="container">
+        <div class="catalog-grid" id="catalogGrid"></div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <p style="font-size: 1.2rem; font-weight: 600; letter-spacing: 1px;">R.WOOD.B</p>
+        <p>© 2025 R.WOOD.B — Dabas materiālu meistari</p>
+        <p style="margin-top: 12px; font-size: 0.8rem;">🏠 Kvalitatīvas koka saunas un mini mājas | Projektēšana, būvniecība, montāža</p>
+    </div>
+</footer>
+
+<!-- Atpakaļ uz augšu -->
+<div style="position: fixed; bottom: 28px; right: 28px; z-index: 99;">
+    <a href="#" style="background:#b87c4a; color:white; border-radius: 60px; padding: 12px 18px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s;">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+<script>
+    // Produktu datu bāze — atbilstoši tēmai: saunas, mini mājas un ekskluzīvi varianti
+    const products = [
+        {
+            id: 1,
+            name: "Mazā Melnā pirts",
+            category: "sauna",
+            badge: "Populārs",
+            desc: "Kompakta pirts ar kontrastējošu melno apdari un lielu panorāmas logu. Ideāli piemērota nelieliem dārza gabaliem.",
+            specs: { area: "12 m²", capacity: "2-4 pers", heating: "Malkas krāsns" },
+            price: "€ 8 900",
+            image: "https://placehold.co/600x450/2f2a24/dbc8b0?text=R.WOOD.B+Melna+pirts"
+        },
+        {
+            id: 2,
+            name: "Gaišā Sauna 'Rasa'",
+            category: "sauna",
+            badge: "Dabas stils",
+            desc: "Apdarē izmantots termiski apstrādāts apse, dabīgs gaismas plūdums un skaņas izolācija. Tradicionāla latviska pirts.",
+            specs: { area: "15 m²", capacity: "4-6 pers", heating: "Elektriskais sildītājs" },
+            price: "€ 11 500",
+            image: "https://placehold.co/600x450/e7dccd/8f6e4c?text=R.WOOD.B+Sauna+Rasa"
+        },
+        {
+            id: 3,
+            name: "Mini māja 'Mežrozīte'",
+            category: "minimaja",
+            badge: "Gatavs projekts",
+            desc: "Pilnvērtīga dzīvojamā platība 25m² ar atvērtu plānojumu, virtuvi un dušas telpu. Energoefektīva koka konstrukcija.",
+            specs: { area: "25 m²", rooms: "1 guļamistaba", heating: "Siltumsūknis" },
+            price: "€ 24 500",
+            image: "https://placehold.co/600x450/b6a582/5b3c28?text=R.WOOD.B+Minimaja+Mezrozite"
+        },
+        {
+            id: 4,
+            name: "Ekskluzīvā Ezera pirts",
+            category: "ekskluzivs",
+            badge: "Premium",
+            desc: "Pirts ar atpūtas zonu, stikla sienu un atvērtu terasi. Lieliski piemērota gleznainās vietās pie ūdens.",
+            specs: { area: "32 m²", capacity: "6-8 pers", heating: "Kombinētā krāsns" },
+            price: "€ 32 900",
+            image: "https://placehold.co/600x450/a7895e/ffffff?text=R.WOOD.B+Ezera+pirts"
+        },
+        {
+            id: 5,
+            name: "Modernā Mini māja 'Līga'",
+            category: "minimaja",
+            badge: "Eko dizains",
+            desc: "Minimālistiska dizaina māja ar zaļo jumtu, lieliem stiklojumiem un saules paneļu sagatavotību. Gada mājoklis 2 personām.",
+            specs: { area: "32 m²", rooms: "1 atsevišķa guļamistaba", heating: "Granulu apkure" },
+            price: "€ 29 900",
+            image: "https://placehold.co/600x450/cbb894/4f3a28?text=R.WOOD.B+Minimaja+Liga"
+        },
+        {
+            id: 6,
+            name: "Klasiskā pirts 'Ozols'",
+            category: "sauna",
+            badge: "Tradīcija",
+            desc: "Spēcīga ozolkoka apdare, liela tvaika istaba un atpūtas telpa. Izturīga un ilgmūžīga sauna aktīvai ģimenei.",
+            specs: { area: "18 m²", capacity: "5-7 pers", heating: "Malkas krāsns ar akmeņiem" },
+            price: "€ 14 900",
+            image: "https://placehold.co/600x450/a67b52/e9ddcf?text=R.WOOD.B+Ozols+Pirts"
+        },
+        {
+            id: 7,
+            name: "Dubultmoduļa māja 'Krasti'",
+            category: "ekskluzivs",
+            badge: "Luksuss",
+            desc: "Divu moduļu savienojums, kopējā platība 60m², piemērota pastāvīgai dzīvošanai. Augstas klases apdare, terase un kamīns.",
+            specs: { area: "60 m²", rooms: "2 guļamistabas", heating: "Grīdas apsilde" },
+            price: "€ 58 000",
+            image: "https://placehold.co/600x450/b6916c/2d241c?text=R.WOOD.B+Krasti+Premium"
+        },
+        {
+            id: 8,
+            name: "Mobilā mini māja 'Cellīte'",
+            category: "minimaja",
+            badge: "Mobilais risinājums",
+            desc: "Viegla konstrukcija uz riteņu platformas. Ideāla viesu mājiņa vai sezonas būve. Ātri pārvietojama.",
+            specs: { area: "18 m²", rooms: "Studijas tips", heating: "Infrasarkanie paneļi" },
+            price: "€ 18 500",
+            image: "https://placehold.co/600x450/caa97b/7b5a3e?text=R.WOOD.B+Mobile+Cellite"
+        }
+    ];
+
+    let currentFilter = "all";
+
+    function renderCatalog(filterValue) {
+        const filteredProducts = filterValue === "all" 
+            ? products 
+            : products.filter(product => product.category === filterValue);
+        
+        const catalogContainer = document.getElementById("catalogGrid");
+        const countSpan = document.getElementById("catalogCount");
+        
+        if (!catalogContainer) return;
+        
+        if (filteredProducts.length === 0) {
+            catalogContainer.innerHTML = `
+                <div class="no-results" style="grid-column: 1/-1;">
+                    <i class="fas fa-tree"></i>
+                    <h3>Šobrīd nav projektu šajā kategorijā</h3>
+                    <p>Izvēlies citu filtru vai sazinies ar mums, lai saņemtu pielāgotu piedāvājumu.</p>
+                    <a href="kontakti.html" class="nav-btn" style="margin-top: 20px; display: inline-flex;"><i class="fas fa-envelope"></i> Sazināties</a>
+                </div>
+            `;
+            countSpan.innerText = `0 projektu`;
+            return;
+        }
+        
+        let html = '';
+        for (let product of filteredProducts) {
+            // specifikāciju renderēšana
+            let specHtml = '';
+            if (product.specs.area) specHtml += `<div class="spec-item"><i class="fas fa-arrows-alt"></i> ${product.specs.area}</div>`;
+            if (product.specs.capacity) specHtml += `<div class="spec-item"><i class="fas fa-users"></i> ${product.specs.capacity}</div>`;
+            if (product.specs.rooms) specHtml += `<div class="spec-item"><i class="fas fa-bed"></i> ${product.specs.rooms}</div>`;
+            if (product.specs.heating) specHtml += `<div class="spec-item"><i class="fas fa-fire"></i> ${product.specs.heating}</div>`;
+            
+            // kategorijas nosaukuma tulkojums
+            let categoryLabel = "";
+            if (product.category === "sauna") categoryLabel = "Pirts / Sauna";
+            else if (product.category === "minimaja") categoryLabel = "Mini māja";
+            else if (product.category === "ekskluzivs") categoryLabel = "Ekskluzīvs projekts";
+            
+            html += `
+                <div class="product-card" data-id="${product.id}">
+                    <div class="card-image" style="background-image: url('${product.image}'); background-size: cover;">
+                        <span class="product-badge">${product.badge}</span>
+                    </div>
+                    <div class="card-content">
+                        <span class="product-category">${categoryLabel}</span>
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-desc">${product.desc}</p>
+                        <div class="product-specs">
+                            ${specHtml}
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">${product.price}<small> *iesk. PVN</small></div>
+                            <a href="#" class="details-link" data-id="${product.id}"><i class="fas fa-info-circle"></i> Pieprasīt</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        catalogContainer.innerHTML = html;
+        countSpan.innerText = `${filteredProducts.length} ${filteredProducts.length === 1 ? 'projekts' : 'projekti'}`;
+        
+        // Pievienot event listenerus pie "Pieprasīt" pogām demonstrācijai - informācijas modālim/alert
+        document.querySelectorAll('.details-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const productId = link.getAttribute('data-id');
+                const product = products.find(p => p.id == productId);
+                if(product) {
+                    alert(`🏷️ ${product.name}\n\nKategorija: ${product.category === 'sauna' ? 'Pirts' : product.category === 'minimaja' ? 'Mini māja' : 'Ekskluzīvs'}\nPlatība: ${product.specs.area || '-'}\nCena: ${product.price}\n\nLai saņemtu precīzu piedāvājumu, lūdzu sazinieties ar mums pa tālruni vai e-pastu. Konsultēsim par piegādi un individuāliem risinājumiem.`);
+                } else {
+                    alert("Informācija par produktu. Sazinieties ar R.WOOD.B konsultantiem!");
+                }
+            });
+        });
+    }
+    
+    // Filtrēšanas pogu aktivizācija un notikumu piesiešana
+    function initFilters() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const filterValue = this.getAttribute('data-filter');
+                if (!filterValue) return;
+                currentFilter = filterValue;
+                
+                // Atjaunot aktīvās klases
+                filterBtns.forEach(btn => btn.classList.remove('active-filter'));
+                this.classList.add('active-filter');
+                
+                renderCatalog(currentFilter);
+            });
+        });
+    }
+    
+    // Sākotnējā ielāde
+    renderCatalog('all');
+    initFilters();
+    
+    // Atgriešanās augšpusē gluda darbība
+    const backToTop = document.querySelector('a[href="#"]');
+    if(backToTop) {
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+    
+    // Sticky filter adjustment: lai filtra josla nedublē pārāk tuvu header (neobligāti)
+    window.addEventListener('scroll', function() {});
+</script>
+</body>
+</html>
