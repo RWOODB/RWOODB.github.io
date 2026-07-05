@@ -24,7 +24,6 @@
             line-height: 1.5;
         }
 
-        /* Container */
         .container {
             max-width: 1280px;
             margin: 0 auto;
@@ -103,7 +102,6 @@
             box-shadow: 0 8px 18px rgba(184,124,74,0.25);
         }
 
-        /* Aktīvā poga katalogā */
         .nav-btn.active {
             background: #b87c4a;
             box-shadow: 0 4px 12px rgba(184,124,74,0.3);
@@ -193,6 +191,47 @@
             background: #f3ede5;
             padding: 6px 16px;
             border-radius: 40px;
+        }
+
+        /* Kategorijas bloķēšanas stils */
+        .category-blocked {
+            background: #fcf8f8;
+            border: 2px dashed #dccfbe;
+            border-radius: 28px;
+            padding: 60px 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.85;
+            grid-column: 1 / -1;
+        }
+
+        .category-blocked h3 {
+            color: #4a3729;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .category-blocked .sold-out-message {
+            color: #d9534f;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: #f9f2f2;
+            padding: 25px 35px;
+            border-left: 6px solid #d9534f;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .category-blocked .sold-out-message i {
+            margin-right: 15px;
+            font-size: 1.8rem;
+        }
+
+        .category-blocked .category-label {
+            color: #8b7358;
+            font-size: 0.9rem;
+            margin-top: 12px;
         }
 
         /* Kataloga režģis */
@@ -349,7 +388,6 @@
             color: white;
         }
 
-        /* tukšs stāvoklis */
         .no-results {
             text-align: center;
             padding: 80px 20px;
@@ -415,9 +453,9 @@
         <div class="nav-wrapper">
             <div class="logo">
                 <a href="https://rwoodb.github.io/" style="text-decoration: none; color: inherit;">
-    <h1><span class="brand-accent">R.WOOD.B</span></h1>
-    <p>🌲 Saunas un mini mājas</p>
-</a>
+                    <h1><span class="brand-accent">R.WOOD.B</span></h1>
+                    <p>🌲 Saunas un mini mājas</p>
+                </a>
             </div>
             <div class="nav-buttons">
                 <a href="galerija.html" class="nav-btn"><i class="fas fa-images"></i> Galerija</a>
@@ -472,7 +510,17 @@
 </div>
 
 <script>
-    // Produktu datu bāze — atbilstoši tēmai: saunas, mini mājas un ekskluzīvi varianti
+    // ====================================================
+    // KATALOGU STATUSI - mainiet šeit vērtības on/off
+    // ====================================================
+    const categoryStatus = {
+        sauna: 'off',        // 'on' - rāda sludinājumus, 'off' - rāda ziņojumu
+        minimaja: 'off',     // 'on' - rāda sludinājumus, 'off' - rāda ziņojumu
+        ekskluzivs: 'off'   // 'on' - rāda sludinājumus, 'off' - rāda ziņojumu
+    };
+    // ====================================================
+
+    // Produktu dati
     const products = [
         {
             id: 1,
@@ -556,19 +604,53 @@
         }
     ];
 
+    // Kategoriju nosaukumi
+    const categoryLabels = {
+        sauna: "Pirts / Sauna",
+        minimaja: "Mini māja",
+        ekskluzivs: "Ekskluzīvs projekts"
+    };
+    
+    const categoryEmojis = {
+        sauna: "🏠",
+        minimaja: "🌿",
+        ekskluzivs: "✨"
+    };
+    
     let currentFilter = "all";
 
+    // ========================
+    // KATALOGA RENDERĒŠANA
+    // ========================
+    
     function renderCatalog(filterValue) {
-        const filteredProducts = filterValue === "all" 
-            ? products 
-            : products.filter(product => product.category === filterValue);
-        
         const catalogContainer = document.getElementById("catalogGrid");
         const countSpan = document.getElementById("catalogCount");
         
         if (!catalogContainer) return;
         
-        if (filteredProducts.length === 0) {
+        // Filtru piemērošana
+        let filteredProducts = products;
+        
+        if (filterValue !== "all") {
+            filteredProducts = products.filter(product => product.category === filterValue);
+        }
+        
+        // Grupējam pēc kategorijas
+        const categories = {};
+        for (const product of filteredProducts) {
+            if (!categories[product.category]) {
+                categories[product.category] = [];
+            }
+            categories[product.category].push(product);
+        }
+        
+        let html = '';
+        let totalCount = 0;
+        let hasVisibleProducts = false;
+        
+        // Ja nav produktu ar šo filtru
+        if (Object.keys(categories).length === 0) {
             catalogContainer.innerHTML = `
                 <div class="no-results" style="grid-column: 1/-1;">
                     <i class="fas fa-tree"></i>
@@ -581,52 +663,89 @@
             return;
         }
         
-        let html = '';
-        for (let product of filteredProducts) {
-            // specifikāciju renderēšana
-            let specHtml = '';
-            if (product.specs.area) specHtml += `<div class="spec-item"><i class="fas fa-arrows-alt"></i> ${product.specs.area}</div>`;
-            if (product.specs.capacity) specHtml += `<div class="spec-item"><i class="fas fa-users"></i> ${product.specs.capacity}</div>`;
-            if (product.specs.rooms) specHtml += `<div class="spec-item"><i class="fas fa-bed"></i> ${product.specs.rooms}</div>`;
-            if (product.specs.heating) specHtml += `<div class="spec-item"><i class="fas fa-fire"></i> ${product.specs.heating}</div>`;
+        // Renderējam katru kategoriju
+        for (const [category, productsInCategory] of Object.entries(categories)) {
+            // Pārbaudām statusu no categoryStatus objekta
+            const status = categoryStatus[category] || 'on';
             
-            // kategorijas nosaukuma tulkojums
-            let categoryLabel = "";
-            if (product.category === "sauna") categoryLabel = "Pirts / Sauna";
-            else if (product.category === "minimaja") categoryLabel = "Mini māja";
-            else if (product.category === "ekskluzivs") categoryLabel = "Ekskluzīvs projekts";
+            // Ja kategorija ir OFF - rāda bloķēšanas ziņojumu
+            if (status === 'off') {
+                const label = categoryLabels[category] || category;
+                html += `
+                    <div class="category-blocked">
+                        <h3>${categoryEmojis[category] || ''} ${label}</h3>
+                        <div class="sold-out-message">
+                            <i class="fas fa-shopping-bag"></i>
+                            Diemžēl, mūsu piedāvājumi bija tik labi, ka tika izpirkti.
+                        </div>
+                        <div class="category-label">Šī sadaļa pašlaik nav pieejama</div>
+                    </div>
+                `;
+                continue;
+            }
             
-            html += `
-                <div class="product-card" data-id="${product.id}">
-                    <div class="card-image" style="background-image: url('${product.image}'); background-size: cover;">
-                        <span class="product-badge">${product.badge}</span>
-                    </div>
-                    <div class="card-content">
-                        <span class="product-category">${categoryLabel}</span>
-                        <h3 class="product-title">${product.name}</h3>
-                        <p class="product-desc">${product.desc}</p>
-                        <div class="product-specs">
-                            ${specHtml}
+            // Ja kategorija ir ON - rāda produktus
+            hasVisibleProducts = true;
+            
+            for (const product of productsInCategory) {
+                totalCount++;
+                
+                // Specifikāciju renderēšana
+                let specHtml = '';
+                if (product.specs.area) specHtml += `<div class="spec-item"><i class="fas fa-arrows-alt"></i> ${product.specs.area}</div>`;
+                if (product.specs.capacity) specHtml += `<div class="spec-item"><i class="fas fa-users"></i> ${product.specs.capacity}</div>`;
+                if (product.specs.rooms) specHtml += `<div class="spec-item"><i class="fas fa-bed"></i> ${product.specs.rooms}</div>`;
+                if (product.specs.heating) specHtml += `<div class="spec-item"><i class="fas fa-fire"></i> ${product.specs.heating}</div>`;
+                
+                const categoryLabel = categoryLabels[product.category] || product.category;
+                
+                html += `
+                    <div class="product-card" data-id="${product.id}">
+                        <div class="card-image" style="background-image: url('${product.image}'); background-size: cover;">
+                            <span class="product-badge">${product.badge}</span>
                         </div>
-                        <div class="card-footer">
-                            <div class="price">${product.price}<small> *iesk. PVN</small></div>
-                            <a href="#" class="details-link" data-id="${product.id}"><i class="fas fa-info-circle"></i> Pieprasīt</a>
+                        <div class="card-content">
+                            <span class="product-category">${categoryLabel}</span>
+                            <h3 class="product-title">${product.name}</h3>
+                            <p class="product-desc">${product.desc}</p>
+                            <div class="product-specs">
+                                ${specHtml}
+                            </div>
+                            <div class="card-footer">
+                                <div class="price">${product.price}<small> *iesk. PVN</small></div>
+                                <a href="#" class="details-link" data-id="${product.id}"><i class="fas fa-info-circle"></i> Pieprasīt</a>
+                            </div>
                         </div>
                     </div>
+                `;
+            }
+        }
+        
+        // Ja visas kategorijas ir OFF un nav redzamu produktu
+        if (!hasVisibleProducts && totalCount === 0) {
+            html = `
+                <div class="category-blocked" style="grid-column: 1/-1;">
+                    <h3>🏷️ Visas sadaļas pašlaik ir slēgtas</h3>
+                    <div class="sold-out-message">
+                        <i class="fas fa-shopping-bag"></i>
+                        Diemžēl, mūsu piedāvājumi bija tik labi, ka tika izpirkti.
+                    </div>
+                    <div class="category-label">Lūdzu, ieskatieties vēlāk vai sazinieties ar mums</div>
                 </div>
             `;
         }
-        catalogContainer.innerHTML = html;
-        countSpan.innerText = `${filteredProducts.length} ${filteredProducts.length === 1 ? 'projekts' : 'projekti'}`;
         
-        // Pievienot event listenerus pie "Pieprasīt" pogām demonstrācijai - informācijas modālim/alert
+        catalogContainer.innerHTML = html;
+        countSpan.innerText = `${totalCount} ${totalCount === 1 ? 'projekts' : 'projekti'}`;
+        
+        // Pievienot event listenerus "Pieprasīt" pogām
         document.querySelectorAll('.details-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const productId = link.getAttribute('data-id');
                 const product = products.find(p => p.id == productId);
                 if(product) {
-                    alert(`🏷️ ${product.name}\n\nKategorija: ${product.category === 'sauna' ? 'Pirts' : product.category === 'minimaja' ? 'Mini māja' : 'Ekskluzīvs'}\nPlatība: ${product.specs.area || '-'}\nCena: ${product.price}\n\nLai saņemtu precīzu piedāvājumu, lūdzu sazinieties ar mums pa tālruni vai e-pastu. Konsultēsim par piegādi un individuāliem risinājumiem.`);
+                    alert(`🏷️ ${product.name}\n\nKategorija: ${categoryLabels[product.category] || product.category}\nPlatība: ${product.specs.area || '-'}\nCena: ${product.price}\n\nLai saņemtu precīzu piedāvājumu, lūdzu sazinieties ar mums pa tālruni vai e-pastu. Konsultēsim par piegādi un individuāliem risinājumiem.`);
                 } else {
                     alert("Informācija par produktu. Sazinieties ar R.WOOD.B konsultantiem!");
                 }
@@ -634,7 +753,10 @@
         });
     }
     
-    // Filtrēšanas pogu aktivizācija un notikumu piesiešana
+    // ========================
+    // FILTRĒŠANA UN NOTIKUMI
+    // ========================
+    
     function initFilters() {
         const filterBtns = document.querySelectorAll('.filter-btn');
         filterBtns.forEach(btn => {
@@ -643,7 +765,6 @@
                 if (!filterValue) return;
                 currentFilter = filterValue;
                 
-                // Atjaunot aktīvās klases
                 filterBtns.forEach(btn => btn.classList.remove('active-filter'));
                 this.classList.add('active-filter');
                 
@@ -652,11 +773,14 @@
         });
     }
     
-    // Sākotnējā ielāde
+    // ========================
+    // SĀKOTNĒJĀ IELĀDE
+    // ========================
+    
     renderCatalog('all');
     initFilters();
     
-    // Atgriešanās augšpusē gluda darbība
+    // Atgriešanās augšpusē
     const backToTop = document.querySelector('a[href="#"]');
     if(backToTop) {
         backToTop.addEventListener('click', (e) => {
@@ -664,9 +788,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
-    
-    // Sticky filter adjustment: lai filtra josla nedublē pārāk tuvu header (neobligāti)
-    window.addEventListener('scroll', function() {});
 </script>
 </body>
 </html>
